@@ -1,0 +1,151 @@
+Implement a groupByOwners function that:
+
+Accepts an associative array containing the file owner name for each file name.
+Returns an associative array containing an array of file names for each owner name, in any order.
+For example, for associative array ["Input.txt" => "Randy", "Code.py" => "Stan", "Output.txt" => "Randy"] the groupByOwners function should return ["Randy" => ["Input.txt", "Output.txt"], "Stan" => ["Code.py"]].
+
+--------------->
+<?php
+class FileOwners
+{
+    public static function groupByOwners($files)
+    {
+        $fileowners = array();
+        foreach($files as $file){
+            $fileowners[$file] = array_keys($files, $file);
+        }
+        return $fileowners;
+    }
+}
+
+$files = array
+(
+    "Input.txt" => "Randy",
+    "Code.py" => "Stan",
+    "Output.txt" => "Randy"
+);
+var_dump(FileOwners::groupByOwners($files));
+--------------------------------------------------------------------------------------------------->
+
+A palindrome is a word that reads the same backward or forward.
+
+Write a function that checks if a given word is a palindrome. Character case should be ignored.
+
+For example, isPalindrome("Deleveled") should return true as character case should be ignored, resulting in "deleveled", which is a palindrome since it reads the same backward and forward.
+
+--------------->
+<?php
+class Palindrome
+{
+    public static function isPalindrome($word)
+    {
+        $newword = '';
+        $arrword = str_split(strtolower($word),1);
+        for($a = count($arrword)-1; $a >=0; $a--){
+            $newword .= $arrword[$a];
+        }
+        return $newword === strtolower($word);        
+    }
+}
+
+echo Palindrome::isPalindrome('Hello');
+--------------------------------------------------------------------------------------------------->
+
+A thesaurus contains words and synonyms for each word. Below is an example of a data structure that defines a thesaurus:
+
+array("buy" => array("purchase"), "big" => array("great", "large"))
+Implement the function getSynonyms, which accepts a word as a string and returns all synonyms for that word in JSON format, as in the example below.
+
+For example, the call $thesaurus->getSynonyms("big") should return:
+
+'{"word":"big","synonyms":["great", "large"]}'
+while a call with a word that doesn't have synonyms, like $thesaurus->getSynonyms("agelast") should return:
+
+'{"word":"agelast","synonyms":[]}'
+--------------->
+
+<?php
+class Thesaurus
+{
+    private $thesaurus;
+
+    function Thesaurus($thesaurus)
+    {
+        $this->thesaurus = $thesaurus;
+    }
+
+    public function getSynonyms($word)
+    {
+        $meaning = isset($this->thesaurus[$word]) ? $this->thesaurus[$word] : [] ;
+        $synonyms = '{"word":"'.$word.'", "synonyms":'.json_encode($meaning).'}';
+        return $synonyms;
+    }
+}
+
+$thesaurus = new Thesaurus(
+    array 
+        (
+            "buy" => array("purchase"),
+            "big" => array("great", "large")
+        )); 
+
+echo $thesaurus->getSynonyms("big");
+echo "\n";
+echo $thesaurus->getSynonyms("agelast");
+-------------------------------------------------------------------------------------->
+Write a function that provides change directory (cd) function for an abstract file system.
+
+Notes:
+
+Root path is '/'.
+Path separator is '/'.
+Parent directory is addressable as '..'.
+Directory names consist only of English alphabet letters (A-Z and a-z).
+The function should support both relative and absolute paths.
+The function will not be passed any invalid paths.
+Do not use built-in path-related functions.
+For example:
+
+$path = new Path('/a/b/c/d');
+$path->cd('../x')
+echo $path->currentPath;
+should display '/a/b/c/x'.
+---------------->
+
+<?php
+class Path
+{
+    public $currentPath;
+
+    function __construct($path)
+    {
+        $this->currentPath = $path;
+    }
+
+    public function cd($newPath)
+    {
+        $dir = explode('/', $this->currentPath);
+        $cd  = explode('/', $newPath);
+        $hitung = 0;
+        foreach($cd as $key => $value){
+            if($value == '..'){
+                $hitung += 1;
+                unset($cd[$key]);
+            }
+        }
+        
+        $hasil = '';
+        for($i=0; $i<= (count($dir)-1-$hitung); $i++){
+            $hasil .= $dir[$i].(($i == (count($dir)-1-$hitung)) ? '' : '/'); 
+        }
+        
+        $tmp_cd = implode('/',$cd);
+        $this->currentPath = $hasil.(strlen($tmp_cd)>0 ? '/'.$tmp_cd : '');
+
+        return $this;
+    }
+}
+
+$path = new Path('/a/b/c/d');
+$path->cd('../../../x/y');
+echo $path->currentPath;
